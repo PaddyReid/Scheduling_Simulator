@@ -17,6 +17,8 @@ class JobClass
 										JobClass();
 		//int							tick();
 		void							createJobs();
+		void							incrementTick();
+
 		
 	private:
 		//Job Variables -required for each job-

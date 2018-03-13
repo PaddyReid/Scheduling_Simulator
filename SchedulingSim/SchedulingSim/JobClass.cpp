@@ -1,5 +1,6 @@
 
 #include "JobClass.hpp"
+#include "Scheduler.hpp"
 
 int main()
 {
@@ -14,6 +15,24 @@ JobClass::JobClass()
 	TICK = 0;
 	//create Jobs
 	JobClass::createJobs();
+
+	//RUN JOB FIFO
+
+	//RUN JOB SJF
+
+	//RUN JOB STTO
+
+	//RUN JOB RR
+
+
+	std::cout << JOB_STACK.size() << std::endl;
+
+
+
+}
+
+void JobClass::incrementTick()
+{
 
 }
 
