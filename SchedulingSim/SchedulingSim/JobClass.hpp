@@ -30,6 +30,7 @@ class JobClass
 		//temp funtions
 		void							FIFO(std::list<Jobs> joblist, int tick);
 		void							STTC(std::list<Jobs> joblist, int tick);
+		void							SJF(std::list<Jobs> joblist, int tick);
 
 
 		
@@ -37,6 +38,8 @@ class JobClass
 		//allowing myself to add 5 Jobs to the struct
 		Jobs							JOB[5];
 		std::list<Jobs>					initial_list;
+
+		std::list<Jobs>					sjf_list;
 
 		//integrating time
 		int								TICK;

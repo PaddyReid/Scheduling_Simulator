@@ -31,9 +31,10 @@ JobClass::JobClass()
 	//JobClass::FIFO(initial_list, TICK);
 
 	//RUN JOB SJF
-	JobClass::STTC(initial_list, TICK);
+	JobClass::SJF(initial_list, TICK);
 
-	//RUN JOB STTO
+	//RUN JOB STTC
+	//JobClass::STTC(initial_list, TICK);
 
 	//RUN JOB RR
 
@@ -109,6 +110,79 @@ void JobClass::printJobs()
 		std::cout << v.name << " " << v.arrival << " " << v.duration << std::endl;
 	}
 	std::cout << " " << std::endl;
+}
+
+
+void JobClass::SJF(std::list<Jobs> joblist, int tick)
+{
+	std::cout << "Running SJF" << std::endl;
+	std::cout << " " << std::endl;
+	JobClass::resetJobs();
+	int current; bool printing = false;
+	int count = 0, jobNumber = 0;
+	int smallest = rand();
+	bool print = false;
+	while (joblist.size() > 0)
+	{
+		//job arrived??
+		for (int i = 0; i < 5; i++)
+		{
+			if (JOB[i].arrival == tick)
+			{
+				jobNumber = i;
+				print = true;
+				count++;
+				break;
+			}
+		}
+
+		if (print)
+		{
+			std::cout << " JOB: " << JOB[jobNumber].name << " *ARRIVED*" << std::endl;
+			print = false;
+			smallest = 10000;
+		}
+
+		if (count >= 1)
+		{
+			//Look for smallest
+			if (!printing)
+			{
+				//look for smallest available job
+				for (int i = 0; i < count; i++)
+				{
+					if (JOB[i].duration < smallest)
+					{
+						if (JOB[i].duration != 0)
+						{
+							smallest = JOB[i].duration;
+							current = i;
+							printing = true;
+						}
+					}
+				}
+			}
+		}
+
+		if (printing)
+		{
+			if (JOB[current].duration != 0)
+			{
+				std::cout << "Elapsed time " << tick << " Job: [" << JOB[current].name << "] Running, time remaining = " << JOB[current].duration-- << std::endl;
+			}
+			else
+			{
+				std::cout << " JOB: " << JOB[current].name << " * Completed" << std::endl;
+				smallest = 10000;
+				printing = false;
+			}
+		}
+
+		
+
+		tick++;
+	}
+
 }
 
 void JobClass::STTC(std::list<Jobs> joblist, int tick)
