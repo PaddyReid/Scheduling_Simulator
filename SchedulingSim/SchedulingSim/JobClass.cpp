@@ -27,13 +27,11 @@ JobClass::JobClass()
 	//Sort jobs by arrival time for FIFO
 	initial_list.sort();
 
-	JobClass::resetJobs();
-
-	JobClass::FIFO(initial_list, TICK);
-
-
+	//FIFO
+	//JobClass::FIFO(initial_list, TICK);
 
 	//RUN JOB SJF
+	JobClass::STTC(initial_list, TICK);
 
 	//RUN JOB STTO
 
@@ -80,7 +78,7 @@ void JobClass::createJobs()
 	////Job four's information
 	JOB[3].name = "D";
 	JOB[3].arrival = 8;
-	JOB[3].duration = 8;
+	JOB[3].duration = 3;
 
 	////Job five's information
 	JOB[4].name = "E";
@@ -113,14 +111,81 @@ void JobClass::printJobs()
 	std::cout << " " << std::endl;
 }
 
+void JobClass::STTC(std::list<Jobs> joblist, int tick)
+{
+	std::cout << "Running STTC" << std::endl;
+	std::cout << " " << std::endl;
+	JobClass::resetJobs();
+	int count = 0, jobNumber = 0, smallest = JOB[0].duration;
+	int jobToPrint = 0;
+	bool print = false;
+	tick = 0;
+	while (joblist.size() > 0)		
+	{
+		//Check for arrivals
+		for (int i = 0; i < 5; i++)
+		{
+			if (JOB[i].arrival == tick)
+			{
+				jobNumber = i;
+				print = true;
+				count++;
+				break;
+			}
+		}
 
+		//Look for smallest
+		if(count > 1)
+		{
+			for (int i = 0; i < count; i++)
+			{
+				if (JOB[i].duration < smallest)
+				{
+					if (JOB[i].duration != 0)
+					{
+						smallest = JOB[i].duration;
+						jobToPrint = i;
+					}
+				}
+			}
+			if (JOB[jobToPrint].duration < 1)
+			{
+				//smallest needs to chage to a large number
+				smallest = 200;
+				std::cout << " JOB: " << JOB[jobToPrint].name << " * Completed";
+				std::cout << "" << std::endl;
+				joblist.pop_back();
+			}
+			else
+			{
+				std::cout << "Elapsed time " << tick << " Job: [" << JOB[jobToPrint].name << "] Running, time remaining = " << JOB[jobToPrint].duration--;
+			}
+		}
+		else if (count >= 1)
+		{
+			std::cout << "Elapsed time " << tick << " Job: [" << JOB[count - 1].name << "] Running, time remaining = " << JOB[count - 1].duration--;
+		}
+		
+
+		if (print)
+		{
+			std::cout << " JOB: " << JOB[jobNumber].name << " *ARRIVED*";
+			print = false;
+		}
+
+		//Need to remove need for this when nothing is printed
+		std::cout << "" << std::endl;
+
+		tick++;
+	}
+}
 
 //temp
 void JobClass::FIFO(std::list<Jobs> joblist, int tick)
 {
 	std::cout << "Running FIFO" << std::endl;
 	std::cout << " " << std::endl;
-
+	JobClass::resetJobs();
 	int count = 0, jobNumber = 0;
 	bool print = false;
 	//We know jobs are in order according to their arrival time
@@ -162,6 +227,8 @@ void JobClass::FIFO(std::list<Jobs> joblist, int tick)
 
 		tick++;
 	}
+
+	std::cout << "All Jobs have finished" << "\n" << std::endl;
 
 
 }

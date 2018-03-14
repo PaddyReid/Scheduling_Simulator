@@ -29,6 +29,7 @@ class JobClass
 
 		//temp funtions
 		void							FIFO(std::list<Jobs> joblist, int tick);
+		void							STTC(std::list<Jobs> joblist, int tick);
 
 
 		
