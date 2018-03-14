@@ -1,22 +1,16 @@
-#pragma once
-
-#include <iostream>
-#include <string>
-#include <stack>
-
-
-
-class Scheduler
-{
-
-public:
-	int					getJobs();
-	static void			FirstInFirstOut(std::string, int, int, int, int, int);
-
-private:
-	std::stack<int>		FIFOStack;
-	
-	
-
-
-};
+//#include <iostream>
+//#include <string>
+//#include <list>
+//
+//class Scheduler
+//{
+//
+//public:
+//	//int					getJobs();
+//	void				FirstInFirstOut(std::list<Jobs> joblist, int tick);
+//	//void				ShortestTimeToCompletion(std::string, int, int, int, int, int);
+//
+//private:
+//	int					shortest;
+//	int					isBigger;
+//};
