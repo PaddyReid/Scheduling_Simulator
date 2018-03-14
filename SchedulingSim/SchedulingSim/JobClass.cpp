@@ -15,8 +15,16 @@ JobClass::JobClass()
 	TICK = 0;
 	//create Jobs
 	JobClass::createJobs();
+	JobClass::printJobs();
 
-	//RUN JOB FIFO
+	//send information to JOB 
+	int count = 0;
+	for (int i = 0; i < JOB_STACK.size() + 1; i++)
+	{
+		Scheduler::FirstInFirstOut(JOB[i].name, JOB[i].arrival, JOB[i].duration, JOB_STACK.size(), count, TICK);
+		count++;
+	}
+
 
 	//RUN JOB SJF
 
@@ -24,16 +32,13 @@ JobClass::JobClass()
 
 	//RUN JOB RR
 
-
-	std::cout << JOB_STACK.size() << std::endl;
-
-
-
 }
 
-void JobClass::incrementTick()
+int JobClass::incrementTick()
 {
+	TICK++;
 
+	return TICK;
 }
 
 
@@ -65,12 +70,15 @@ void JobClass::createJobs()
 	JOB[4].name = "E";
 	JOB[4].arrival = 23;
 	JOB[4].duration = 63;
+}
 
+
+void JobClass::printJobs()
+{
 	//Printing Jobs to see what goes into each schedule
 	std::cout << "JOB LIST" << std::endl;
 	for (int i = 0; i < 5; i++)
 	{
-
 		std::cout << JOB[i].name << " " << JOB[i].arrival << " " << JOB[i].duration << std::endl;
 
 		//Adding Job arrival time to stack

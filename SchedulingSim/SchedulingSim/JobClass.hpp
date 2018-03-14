@@ -17,7 +17,10 @@ class JobClass
 										JobClass();
 		//int							tick();
 		void							createJobs();
-		void							incrementTick();
+		void							printJobs();
+
+		int								incrementTick();
+		
 
 		
 	private:
@@ -30,7 +33,7 @@ class JobClass
 		Jobs							JOB[5];
 
 		//integrating time
-		int								TICK = 0;
+		int								TICK;
 
 		//create stack to fill jobs
 		std::stack<int>					JOB_STACK;
