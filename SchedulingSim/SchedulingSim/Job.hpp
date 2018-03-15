@@ -10,6 +10,11 @@ struct Jobs
 	int arrival;
 	int duration;
 
+	int turnaround;
+	int waittime;
+	int response;
+
+
 	bool operator <(const Jobs & playerObj) const
 	{
 		return arrival < playerObj.arrival;
@@ -26,6 +31,7 @@ struct scheduling
 	std::string RR;
 	std::string RRT;
 
+
 	std::string Notifications;
 };
 
@@ -41,14 +47,11 @@ class Job
 		int								incrementTick();
 		void							addJobsToList();
 		void							schedulingJobs();
+		float							preJobs();
 
-
-		//temp funtions
-		void							FIFO(std::list<Jobs> joblist, int tick);
-		void							STTC(std::list<Jobs> joblist, int tick);
-		void							SJF(std::list<Jobs> joblist, int tick);
-		void							RR(std::list<Jobs> joblist, int tick);
 		void							prinSchedule();
+		void							pullInfo();
+		void							printDemofile();
 
 		
 	private:
@@ -73,6 +76,8 @@ class Job
 
 		//integrating time
 		int								TICK;
+		float							average_pre_FiFo;
+		
 
 
 		

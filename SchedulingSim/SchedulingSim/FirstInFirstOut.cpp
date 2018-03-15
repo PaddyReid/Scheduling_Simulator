@@ -13,11 +13,15 @@ void Scheduler::addJobs(std::list<Jobs> myList)
 	}
 }
 
+std::list<int> Scheduler::sendStats_FIFO()
+{
+	return fifo_stats;
+}
+
 std::list<std::string>	Scheduler::fifo_getCompleted()
 {
 	return fifo_completed;
 }
-
 
 
 std::list<std::string> Scheduler::FirstInFirstOut(std::list<Jobs> joblist, int tick)
@@ -37,16 +41,16 @@ std::list<std::string> Scheduler::FirstInFirstOut(std::list<Jobs> joblist, int t
 		{
 			if (shedule[i].arrival == tick)
 			{
+				shedule[i].response = tick + shedule[count].waittime;
+				shedule[i].waittime = shedule[count].waittime + tick;
 				//fifo_completed.push_back(shedule[jobNumber].name + " ARRIVED");
 				jobNumber = i;
 				print = true;
 				break;
-
 			}
 
 			if (print)
 			{
-				
 				print = false;
 			}
 		}
@@ -62,6 +66,11 @@ std::list<std::string> Scheduler::FirstInFirstOut(std::list<Jobs> joblist, int t
 
 			if (shedule[count].duration == 1)
 			{
+				//calculations
+				
+				shedule[count].turnaround = shedule[count].arrival - tick;
+				//increment stats
+
 				fifo_completed.push_back(" *FIFO. " + shedule[count].name + " COMPLETED");
 			}
 			else

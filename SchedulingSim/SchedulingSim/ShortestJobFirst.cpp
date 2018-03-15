@@ -6,6 +6,11 @@ std::list<std::string> Scheduler::getCompleted()
 	return completed;
 }
 
+std::list<int> Scheduler::sendStats_SJF()
+{
+	return sjf_stats;
+}
+
 std::list<std::string>	Scheduler::ShortestJobFirst(std::list<Jobs> joblist, int tick)
 {
 	Scheduler::addJobs(joblist);
@@ -13,6 +18,7 @@ std::list<std::string>	Scheduler::ShortestJobFirst(std::list<Jobs> joblist, int 
 	int count = 0, jobNumber = 0;
 	int smallest = rand();
 	bool print = false;
+	float avarage = 0;
 	int end = joblist.size();
 	while (end > 0)
 	{
@@ -21,6 +27,7 @@ std::list<std::string>	Scheduler::ShortestJobFirst(std::list<Jobs> joblist, int 
 		{
 			if (shedule[i].arrival == tick)
 			{
+				//shedule[i].response = tick + shedule[count].arrival;
 				jobNumber = i;
 				print = true;
 				count++;
@@ -70,6 +77,8 @@ std::list<std::string>	Scheduler::ShortestJobFirst(std::list<Jobs> joblist, int 
 			else
 			{
 				//sjf_list.push_back(shedule[current].name + " COMPLETED");
+				shedule[current].turnaround = shedule[current].arrival - tick;
+				sjf_stats.push_back(shedule[current].turnaround);
 				completed.push_back("*SJF. " + shedule[current].name + " COMPLETED");
 				end = end - 1;
 				smallest = 10000;
@@ -78,5 +87,7 @@ std::list<std::string>	Scheduler::ShortestJobFirst(std::list<Jobs> joblist, int 
 		}
 		tick++;
 	}
+	
+
 	return sjf_list;
 }
