@@ -33,11 +33,17 @@ public:
 	std::list<std::string>			RoundRobin(std::list<Jobs> joblist, int tick);
 	std::list<std::string>			RoundRobinTwo(std::list<Jobs> joblist, int tick);
 
-	std::list<int>					sendStats_FIFO();
-	std::list<int>					sendStats_SJF();
-	std::list<int>					sendStats_STCF();
-	std::list<int>					sendStats_RR();
-	std::list<int>					sendStats_RRT();
+	std::list<float>				sendStats_FIFO();
+	std::list<float>				sendStats_SJF();
+	std::list<float>				sendStats_STCF();
+	std::list<float>				sendStats_RR();
+	std::list<float>				sendStats_RRT();
+
+	std::list<float>				getFIFOResponse();
+	std::list<float>				getSJFResponse();
+	std::list<float>				getSTCFResponse();
+	std::list<float>				getRResponse();
+	std::list<float>				getRRTesponse();
 
 	std::list<std::string>			getCompleted();
 	std::list<std::string>			fifo_getCompleted();
@@ -57,16 +63,19 @@ public:
 	std::list<std::string>			rr_completed;
 	std::list<std::string>			rrt_completed;
 
-	std::list<int>					sjf_stats;
-	std::list<int>					fifo_stats;
-	std::list<int>					stcf_stats;
-	std::list<int>					rr_stats;
-	std::list<int>					rrt_stats;
+	std::list<float>				sjf_stats;
+	std::list<float>				fifo_stats;
+	std::list<float>				stcf_stats;
+	std::list<float>				rr_stats;
+	std::list<float>				rrt_stats;
 
 private:
 	int								shortest;
 	int								isBigger;
 	sheduling						shedule[5];
 	float							average;
+
+	float							turnAround;
+	float							response;
 
 };

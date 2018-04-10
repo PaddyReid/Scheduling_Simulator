@@ -9,14 +9,6 @@ Job::Job()
 {
 }
 
-int main()
-{
-	jobs.myJobs();
-
-	system("pause");
-	return 0;
-}
-
 void Job::pullInfo()
 {
 	std::ifstream infile("Jobs.txt");
@@ -37,16 +29,20 @@ void Job::myJobs()
 {
 	TICK = 0;
 	//create Jobs
-	//jobs.createJobs();
+	jobs.createJobs();
+
+	//pull jobs from file
+	jobs.pullInfo();
 
 	//Jobs to list
-	jobs.addJobsToList();
+	initial_list = jobs.addJobsToList();
 
 	//Printing Jobs
-	//jobs.printJobs();
+	jobs.printJobs();
 
 	//Sort jobs by arrival time for FIFO
 	initial_list.sort();
+
 
 	//Running the schedules
 	fifo_list = sheduler.FirstInFirstOut(initial_list, TICK);
@@ -61,21 +57,28 @@ void Job::myJobs()
 	rr_completed = sheduler.rr_getCompleted();
 	rrt_completed = sheduler.rrt_getCompleted();
 
-	//Add Jobs to print
-	Job::schedulingJobs();
+	to_print = schedulingJobs(fifo_list, sjf_list, stcf_list, rr_list, rrTwo_list, fifo_completed, sjf_completed,
+		stcf_completed, rr_completed, rrt_completed);
+
+	//for (auto l : to_print)
+	//{
+	//	std::cout << "W " << l.FIFO << std::endl;
+	//}
 
 	//print
-	Job::prinSchedule();
+	jobs.prinSchedule(to_print);
 
 }
 
-void Job::addJobsToList()
+std::list<Jobs> Job::addJobsToList()
 {
 	//Adding Jobs to a list
 	for (int i = 0; i < 5; i++)
 	{
 		initial_list.push_back(JOB[i]);
 	}
+
+	return initial_list;
 
 }
 
@@ -121,7 +124,7 @@ void Job::createJobs()
 void Job::resetJobs()
 {
 	int i = 0;
-	for (auto v : initial_list)
+	for (Jobs v : initial_list)
 	{
 		JOB[i].name = v.name;
 		JOB[i].arrival = v.arrival;
@@ -134,7 +137,7 @@ void Job::printJobs()
 {
 	//Printing Jobs to see what goes into each schedule
 	std::cout << "Initial input" << std::endl;
-	for (auto v : initial_list)
+	for (Jobs v : initial_list)
 	{
 		//printing as we loop
 		std::cout << v.name << " " << v.arrival << " " << v.duration << std::endl;
@@ -144,76 +147,85 @@ void Job::printJobs()
 
 }
 
-void Job::schedulingJobs()
+std::list<scheduling> Job::schedulingJobs(std::list<std::string> fifo, std::list<std::string> sjf,
+	std::list<std::string> stct, std::list<std::string> rr, std::list<std::string> rrt, std::list<std::string> c_fifo,
+	std::list<std::string> c_sjf, std::list<std::string> c_stct, std::list<std::string> c_rr, std::list<std::string> c_rrt)
 {
 	int count = 0;
-	for (auto list : fifo_list)
+	int globalCount = 0;
+	for (std::string list : fifo)
 	{
 		schedules[count].FIFO = list;
 		count++;
-		//std::cout << list << std::endl;
+		globalCount++;
 	}
 	count = 0;
-	for (auto list : sjf_list)
+	for (std::string list : sjf)
 	{
 		schedules[count].SJF = list;
 		count++;
 	}
 	count = 0;
-	for (auto list : stcf_list)
+	for (std::string list : stct)
 	{
 		schedules[count].STTC = list;
 		count++;
 	}
 	count = 0;
-	for (auto list : rr_list)
+	for (std::string list : rr)
 	{
 		schedules[count].RR = list;
 		count++;
 	}
 	count = 0;
-	for (auto list : rrTwo_list)
+	for (std::string list : rrt)
 	{
 		schedules[count].RRT = list;
 		count++;
 	}
 	count = 0;
-	for (auto list : fifo_completed)
+	for (std::string list : c_fifo)
 	{
 		schedules[count].Notifications = list;
 		count++;
 	}
 	count = 0;
-	for (auto list : sjf_completed)
+	for (std::string list : c_sjf)
 	{
-		schedules[count].Notifications = schedules[count].Notifications + " " + list;
+		schedules[count].Notifications = schedules[count].Notifications  + list;
 		count++;
 	}
 	count = 0;
-	for (auto list : stcf_completed)
+	for (std::string list : c_stct)
 	{
-		schedules[count].Notifications = schedules[count].Notifications + " " + list;
+		schedules[count].Notifications = schedules[count].Notifications  + list;
 		count++;
 	}
 
 	count = 0;
-	for (auto list : rr_completed)
+	for (std::string list : c_rr)
 	{
-		schedules[count].Notifications = schedules[count].Notifications + " " + list;
+		schedules[count].Notifications = schedules[count].Notifications  + list;
 		count++;
 	}
 
-	count = 0;
-	for (auto list : rrt_completed)
+
+	for (std::string list : c_rrt)
 	{
-		schedules[count].Notifications = schedules[count].Notifications + " " + list;
+		schedules[count].Notifications = schedules[count].Notifications  + list;
 		count++;
 	}
 
+	for (int i = 0; i < globalCount; i++)
+	{
+		to_print.push_back(schedules[i]);
+	}
+
+	return to_print;
 
 }
 
-void Job::prinSchedule()
+void Job::prinSchedule(std::list<scheduling> list)
 {
 	Job::printDemofile();
 	int count = 0;
@@ -227,67 +239,116 @@ void Job::prinSchedule()
 		startArray[i] = JOB[i].arrival;
 	}
 	std::cout << "T" << "\t |" << "FIFO" << "\t |" << "SJF" << "\t |" << "STCF" << "\t |" << "RR" << "\t |" << "RRT" << "\t |" << "Notifications" << "\n" << std::endl;
-	//std::cout << "____________________________________" << std::endl;
 
 	int print = 0;
-	for (int i = JOB[0].arrival; i < fifo_list.size() + JOB[0].arrival; i++)
+	for (scheduling schedules : list)
 	{
-		std::cout << time << "\t |" << schedules[count].FIFO << "\t |" << schedules[count].SJF << "\t |" << schedules[count].STTC <<
-			"\t |" << schedules[count].RR << "\t |" << schedules[count].RRT << "\t |" << schedules[count].Notifications;
+		std::cout << time << "\t |" << schedules.FIFO << "\t |" << schedules.SJF << "\t |" << schedules.STTC <<
+			"\t |" << schedules.RR << "\t |" << schedules.RRT << "\t |" << schedules.Notifications;
 
 		if (startArray[print] == time)
 		{
 			std::cout << " *" << JOB[print].name << ". Has Arrived";
 			print++;
 		}
-		
-		std::cout <<  std::endl;
+
+		std::cout << std::endl;
 
 		//std::cout << time << schedules[count].STTC << std::endl;
 		time++;
 		count++;
+		print++;
 	}
+
+	//for (int i = JOB[0].arrival; i < fifo_list.size() + JOB[0].arrival; i++)
+	//{
+	//	std::cout << time << "\t |" << schedules[count].FIFO << "\t |" << schedules[count].SJF << "\t |" << schedules[count].STTC <<
+	//		"\t |" << schedules[count].RR << "\t |" << schedules[count].RRT << "\t |" << schedules[count].Notifications;
+
+	//	if (startArray[print] == time)
+	//	{
+	//		std::cout << " *" << JOB[print].name << ". Has Arrived";
+	//		print++;
+	//	}
+	//	
+	//	std::cout <<  std::endl;
+
+	//	//std::cout << time << schedules[count].STTC << std::endl;
+	//	time++;
+	//	count++;
+	//}
 
 	std::cout << std::endl;
 	std::cout << "Pre-Job statistics" << std::endl;
+
 	//print Pre-Job statistics
+
 	int i = 0;
-	for (auto l : sheduler.sendStats_FIFO())
+	for (float l : sheduler.sendStats_FIFO())
 	{
 		JOB[i].turnaround = l;
 		i++;
 	}
 
+	i = 0;
+	for (float l : sheduler.sendStats_SJF())
+	{
+		JOB[i].turnaround_1 = l;
+		i++;
+	}
+
+	i = 0;
+	for (float l : sheduler.sendStats_STCF())
+	{
+		JOB[i].turnaround_2 = l;
+		i++;
+	}
+
+	i = 0;
+	for (float l : sheduler.sendStats_RR())
+	{
+		JOB[i].turnaround_3 = l;
+		i++;
+	}
+
+	i = 0;
+	for (float l : sheduler.sendStats_RRT())
+	{
+		JOB[i].turnaround_4 = l;
+		i++;
+	}
+
 	count = 0;
-	std::cout << "#" << "\t |" << "JOB" << "\t |" << "FIFO" << "\t |" << "SJF" << "\t |" << "STCF" << "\t |" << "RR" << "\t |" << "RRT" << "\t |" << std::endl;
+	std::cout << "#" << "\t" << "JOB" << "\t" << "FIFO" << "\t" << "SJF" << "\t" << "STCF" << "\t" << "RR" << "\t" << "RRT" << "\t" << std::endl;
 	for (int i = 0; i < 5; i++)
 	{
 		/*JOB[i] = sheduler.sendStats(i);*/
-		std::cout << "T" << "\t |" << JOB[i].name << "\t |" << " " << "\t |" << JOB[i].turnaround <<
-			"\t |" << schedules[count].RR << "\t |" << schedules[count].RRT << "\t |" << schedules[count].Notifications << std::endl;
+		std::cout << "T" << "\t" << JOB[i].name << "\t" << JOB[i].turnaround << "\t" << JOB[i].turnaround_1 <<
+			"\t" << JOB[i].turnaround_2 << "\t" << JOB[i].turnaround_3 << "\t" << JOB[i].turnaround_4 << std::endl;
 		count++;
 	}
 
 	std::cout << std::endl;
 	count = 0;
-	std::cout << "#" << "\t |" << "JOB" << "\t |" << "FIFO" << "\t |" << "SJF" << "\t |" << "STCF" << "\t |" << "RR" << "\t |" << "RRT" << "\t |" << std::endl;
+	std::cout << "#" << "\t" << "JOB" << "\t" << "FIFO" << "\t" << "SJF" << "\t" << "STCF" << "\t" << "RR" << "\t" << "RRT" << "\t" << std::endl;
 	for (int i = 0; i < 5; i++)
 	{
 		/*JOB[i] = sheduler.sendStats(i);*/
-		std::cout << "R" << "\t |" << JOB[i].name << "\t |" << JOB[i].turnaround << "\t |" << schedules[count].STTC <<
-			"\t |" << schedules[count].RR << "\t |" << schedules[count].RRT << "\t |" << schedules[count].Notifications << std::endl;
+		std::cout << "R" << "\t" << JOB[i].name << "\t" << JOB[i].turnaround << "\t" << JOB[i].turnaround_1 <<
+			"\t" << JOB[i].turnaround_2 << "\t" << JOB[i].turnaround_3 << "\t" << JOB[i].turnaround_4 << std::endl;
 		count++;
 	}
 
 	std::cout << "Aggregate statistics" << std::endl;
 	std::cout << std::endl;
 	count = 0;
-	std::cout << "#" << "\t |" << "JOB" << "\t |" << "FIFO" << "\t |" << "SJF" << "\t |" << "STCF" << "\t |" << "RR" << "\t |" << "RRT" << "\t |" << std::endl;
+	std::cout << "#" << "\t" << "JOB" << "\t" << "FIFO" << "\t" << "SJF" << "\t" << "STCF" << "\t" << "RR" << "\t" << "RRT" << "\t" << std::endl;
 	for (int i = 0; i < 5; i++)
 	{
 		/*JOB[i] = sheduler.sendStats(i);*/
-		std::cout << "R" << "\t |" << JOB[i].name << "\t |" << JOB[i].turnaround << "\t |" << schedules[count].STTC <<
-			"\t |" << schedules[count].RR << "\t |" << schedules[count].RRT << "\t |" << schedules[count].Notifications << std::endl;
+		/*JOB[i] = sheduler.sendStats(i);*/
+		std::cout << "" << "\t" << JOB[i].name << "\t" << JOB[i].turnaround << "\t" << JOB[i].turnaround_1 <<
+			"\t" << JOB[i].turnaround_2 << "\t" << JOB[i].turnaround_3 << "\t" << JOB[i].turnaround_4 << std::endl;
 		count++;
 	}
 
@@ -308,14 +369,12 @@ void Job::printDemofile()
 
 		//myFile << "test" << std::endl;
 		//myFile << "T" << "\t |" << "FIFO" << "\t |" << "SJF" << "\t |" << "STCF" << "\t |" << "RR" << "\t |" << "RRT" << "\t |" << "Notifications" << "\n" << std::endl;
-		myFile << "Blue Team " << " : " << " Red Team" << "  -  " << std::endl;
 		myFile.close();
 
 	}
 	else
 	{
 		// use existing file
-		myFile << "Blue Team " << " : " << " Red Team" << "  -  " << std::endl;
 		myFile.close();
 	}
 
